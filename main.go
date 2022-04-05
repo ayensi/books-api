@@ -25,6 +25,7 @@ func main() {
 	router.GET("/books", getBooks)
 	router.GET("book/byId/:id", getBookById)
 	router.POST("/book/create", createBook)
+	router.PATCH("book/update/:id", updateBookById)
 	router.Run("localhost:8080")
 }
 
@@ -50,6 +51,19 @@ func getBookById(c *gin.Context) {
 		c.IndentedJSON(http.StatusNotFound, err.Error())
 	}
 	c.IndentedJSON(http.StatusFound, book)
+}
+
+func updateBookById(c *gin.Context) {
+	book, err := bookById(c.Param("id"))
+
+	if err != nil {
+		c.IndentedJSON(http.StatusNotFound, err.Error())
+	}
+
+	c.BindJSON(&book)
+
+	c.IndentedJSON(http.StatusOK, book)
+
 }
 
 func bookById(id string) (*book, error) {
